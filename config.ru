@@ -10,12 +10,16 @@ require './app'
 #   end
 # end
 #
+
 # use Honeybadger::Rack::ErrorNotifier
-# use Napa::Middleware::Logger
+
+use Napa::Middleware::Logger
 
 use Napa::Middleware::AppMonitor
+
 # Uncomment to require header passwords for all requests
 # use Napa::Middleware::Authentication
+
 use ActiveRecord::ConnectionAdapters::ConnectionManagement
 
 run ApplicationApi

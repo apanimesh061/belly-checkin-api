@@ -1,40 +1,82 @@
 class BusinessesApi < Grape::API
+
+  helpers do
+    def business
+      @business ||= Business.find(params[:id])
+    end
+  end
+
   desc 'Get a list of businesses'
   params do
-    optional :ids, type: Array, desc: 'Array of businesses ids'
+    optional :ids, type: Array, desc: 'Array of business ids'
   end
   get do
     businesses = params[:ids] ? Business.where(id: params[:ids]) : Business.all
     represent businesses, with: BusinessRepresenter
   end
 
-  desc 'Create an businesses'
+  desc 'Create a business'
   params do
+    optional :check_in_timeout, type: Integer, desc: "Seconds required between check-ins by a single User"
+    optional :token, type: String, desc: "Custom token to use for check-in verification"
   end
-
   post do
-    businesses = Business.create!(permitted_params)
-    represent businesses, with: BusinessRepresenter
+    business = Business.create(permitted_params)
+    represent business, with: BusinessRepresenter
   end
 
   params do
-    requires :id, desc: 'ID of the businesses'
+    requires :id, desc: 'ID of the business'
   end
   route_param :id do
-    desc 'Get an businesses'
+    desc 'Get an business'
     get do
-      businesses = Business.find(params[:id])
-      represent businesses, with: BusinessRepresenter
+      represent business, with: BusinessRepresenter
     end
 
-    desc 'Update an businesses'
+    desc 'Update an business'
     params do
+      optional :check_in_timeout, type: Integer, desc: "Seconds required between check-ins by a single User"
     end
     put do
-      # fetch businesses record and update attributes.  exceptions caught in app.rb
-      businesses = Business.find(params[:id])
-      businesses.update_attributes!(permitted_params)
-      represent businesses, with: BusinessRepresenter
+      business.update_attributes!(permitted_params)
+      represent business, with: BusinessRepresenter
+    end
+
+    desc 'Reset the token for a Business'
+    params do
+      optional :token, type: String, desc: "Token required to check-in at a Business"
+    end
+    put '/update-token' do
+      business.update_token(permitted_params[:token])
+      represent business, with: BusinessRepresenter
+    end
+
+    desc 'Get a list of CheckIns for a Business'
+    params do
+      optional :limit, type: Integer, desc: "Number of most recent check-ins desired"
+    end
+    get '/checkins' do
+      if permitted_params[:limit]
+        check_ins = business.check_ins.last(permitted_params[:limit])
+      else
+        check_ins = business.check_ins
+      end
+      represent check_ins, with: CheckInRepresenter
+    end
+
+    desc 'Get a list of Users that have checked in at a Business'
+    params do
+      optional :unique, type: Boolean, desc: "Only list each customer once"
+    end
+    get '/customers' do
+      if permitted_params[:unique]
+        customers = business.unique_customers
+      else
+        customers = business.customers
+      end
+      represent customers, with: UserRepresenter
     end
   end
+
 end

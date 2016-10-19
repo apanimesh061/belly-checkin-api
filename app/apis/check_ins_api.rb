@@ -1,40 +1,35 @@
 class CheckInsApi < Grape::API
-  desc 'Get a list of check_ins'
-  params do
-    optional :ids, type: Array, desc: 'Array of check_ins ids'
-  end
-  get do
-    check_ins = params[:ids] ? CheckIn.where(id: params[:ids]) : CheckIn.all
-    represent check_ins, with: CheckInRepresenter
+
+  helpers do
+    def user
+      User.find_by_id permitted_params[:user_id]
+    end
+
+    def business
+      Business.find_by_id permitted_params[:business_id]
+    end
+
+    def business_token
+      permitted_params[:business_token]
+    end
   end
 
-  desc 'Create an check_ins'
+  desc "Create a CheckIn"
   params do
+    requires :user_id, type: Integer, desc: "ID of User checking in"
+    requires :business_id, type: Integer, desc: "ID of Business where User is checking in"
+    requires :business_token, type: String, desc: "Token string to check in at Business"
   end
-
   post do
-    check_ins = CheckIn.create!(permitted_params)
-    represent check_ins, with: CheckInRepresenter
+    args = { user: user, business: business, business_token: business_token }
+    @action = CreateCheckIn.new(args)
+
+    if @action.call
+      represent @action.record, with: CheckInRepresenter
+    else
+      action_error = @action.errors.first
+      error! action_error[:message], action_error[:code]
+    end
   end
 
-  params do
-    requires :id, desc: 'ID of the check_ins'
-  end
-  route_param :id do
-    desc 'Get an check_ins'
-    get do
-      check_ins = CheckIn.find(params[:id])
-      represent check_ins, with: CheckInRepresenter
-    end
-
-    desc 'Update an check_ins'
-    params do
-    end
-    put do
-      # fetch check_ins record and update attributes.  exceptions caught in app.rb
-      check_ins = CheckIn.find(params[:id])
-      check_ins.update_attributes!(permitted_params)
-      represent check_ins, with: CheckInRepresenter
-    end
-  end
 end
