@@ -9,3 +9,29 @@
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
 # It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema.define(version: 20161019000654) do
+
+  create_table "businesses", force: :cascade do |t|
+    t.string   "token",            limit: 255
+    t.integer  "check_in_timeout", limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "check_ins", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id",     limit: 4
+    t.integer  "business_id", limit: 4
+  end
+
+  add_index "check_ins", ["business_id"], name: "index_check_ins_on_business_id", using: :btree
+  add_index "check_ins", ["user_id"], name: "index_check_ins_on_user_id", using: :btree
+
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+end
