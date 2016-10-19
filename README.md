@@ -196,6 +196,7 @@ mysql> desc check_ins;
 +-------------+----------+------+-----+---------+----------------+
 5 rows in set (0.00 sec)
 ```
+- - -
 
 ####API Generation
 Now that we have the models with us, we need to start thinking of how to get data into and from the database. This is done by using apis. Since, we have three by operation we need to create three endpoints
@@ -208,14 +209,23 @@ This generates three api files in `app/apis`.
 
 You can add validations and customizations to api the way you want.
 
+- - -
+
+
 ####Security
 Here three possibilities have been considered:
 1. Stopping malicious loggin-in by providing access only using a `token` that the user get when he creates a business
 2. Second level of security could be provided using header passwords which can activated by adding `use Napa::Middleware::Authentication` to `config.ru`
 3. Stopping mis-use of the API. We can stop a user from frequently checking in the same business but providing a timeout.
 
-####Example runs
+- - -
 
+
+####Example Curl Calls
+
+######User API
+
+Creating a user
 ```
 curl -X POST http://localhost:9393/users/ -H "Passwords: sithlord" -d '' | jq ''
 {
@@ -224,7 +234,10 @@ curl -X POST http://localhost:9393/users/ -H "Passwords: sithlord" -d '' | jq ''
     "id": "1"
   }
 }
+```
 
+Creating a new user w/o header password raises an error
+```
 curl -X POST http://localhost:9393/users/ -d '' | jq ''
 {
   "error": {
@@ -232,7 +245,10 @@ curl -X POST http://localhost:9393/users/ -d '' | jq ''
     "message": "bad password"
   }
 }
+```
 
+Create a new second user
+```
 curl -X POST http://localhost:9393/users/ -H "Passwords: sithlord" -d '' | jq ''
 {
   "data": {
@@ -240,7 +256,10 @@ curl -X POST http://localhost:9393/users/ -H "Passwords: sithlord" -d '' | jq ''
     "id": "2"
   }
 }
+```
 
+Retrive all users
+```
 curl -X GET http://localhost:9393/users -H "Passwords: sithlord" | jq ''
 {
   "data": [
@@ -256,6 +275,10 @@ curl -X GET http://localhost:9393/users -H "Passwords: sithlord" | jq ''
 }
 ```
 
+- - -
+######Business API
+
+The `Base-64` code is generated using `SecureRandom`
 ```
 curl -X POST http://localhost:9393/businesses/ -H "Passwords: sithlord" -d check\_in\_timeout=600 -d token="" | jq ''
 {
@@ -302,6 +325,7 @@ curl -X PUT http://localhost:9393/businesses/2/update_token -H "Passwords: sithl
 +----+------------------------+------------------+---------------------+---------------------+
 ```
 
+Retrieve all businesses
 ```
 curl -X GET http://localhost:9393/businesses -H "Passwords: sithlord" | jq ''
 {
@@ -320,6 +344,9 @@ curl -X GET http://localhost:9393/businesses -H "Passwords: sithlord" | jq ''
 }
 ```
 
+- - -
+######CheckIn API
+
 ```
 curl -X POST http://localhost:9393/checkins -H "Passwords: sithlord" -d user\_id=1 -d business\_id=1 -d business\_token="my_password" | jq ''
 {
@@ -336,7 +363,10 @@ curl -X POST http://localhost:9393/checkins -H "Passwords: sithlord" -d user\_id
     "id": "1"
   }
 }
+```
 
+If we try to check-in before the timeout of 600s, we get an error
+```
 curl -X POST http://localhost:9393/checkins -H "Passwords: sithlord" -d user\_id=1 -d business\_id=2 -d business\_token="my_password" | jq ''
 {
   "error": {
@@ -352,3 +382,6 @@ curl -X POST http://localhost:9393/checkins -H "Passwords: sithlord" -d user\_id
 +----+---------------------+---------------------+---------+-------------+
 1 row in set (0.00 sec)
 ```
+
+####Misc
+The whole code was run on an Ubuntu 16.04 Docker Image on a Windows 10 host
