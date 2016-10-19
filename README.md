@@ -214,6 +214,7 @@ You can add validations and customizations to api the way you want.
 
 ####Security
 Here three possibilities have been considered:
+
 1. Stopping malicious loggin-in by providing access only using a `token` that the user get when he creates a business
 2. Second level of security could be provided using header passwords which can activated by adding `use Napa::Middleware::Authentication` to `config.ru`
 3. Stopping mis-use of the API. We can stop a user from frequently checking in the same business but providing a timeout.
