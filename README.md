@@ -8,7 +8,8 @@
 6. [Migration of Models](#migration-of-models-to-database)
 7. [API Generation](#api-generation)
 8. [Security](#security)
-9. [Examples](#example-curl-calls)
+9. [Rspec Tests](#rspec-tests)
+10. [Examples](#example-curl-calls)
 
 - - -
 
@@ -232,6 +233,20 @@ Here three possibilities have been considered:
 
 - - -
 
+####Rspec Tests
+`rspec` tests have also been added to this project. You need to set-up a testing environment using `.env.test` and switch to Test Env by `RACK_ENV=test`.
+
+Following commands need to be run in order to execute the tests:
+```
+RACK_ENV=test bundle exec rake db:create
+RACK_ENV=test bundle exec rake db:migrate
+bundle exec rspec spec
+```
+The output should give 0 failures.
+
+**ISSUE:** There is an issue with some function references `NoMethodError` in the new `shoulda-matchers v3.1.1`. That can be resolved by downgrading to `v2.8.0`. This is been specified in the GemFile.
+
+- - -
 
 ####Example Curl Calls
 
