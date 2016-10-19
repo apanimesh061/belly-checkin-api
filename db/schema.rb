@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 20161019000654) do
 
   create_table "businesses", force: :cascade do |t|
     t.string   "token",            limit: 255
-    t.integer  "check_in_timeout", limit: 4
+    t.integer  "check_in_timeout", limit: 4,   default: 3600
     t.datetime "created_at"
     t.datetime "updated_at"
   end

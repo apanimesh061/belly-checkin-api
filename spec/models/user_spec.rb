@@ -11,8 +11,8 @@ describe User do
 
     it 'should return the User\'s most recent CheckIn at a given Business' do
       business = create :business
-      ## Creating 10 users
-      5.times {
+      ## Creating 50 users
+      50.times {
       	CheckIn.create(user: user, business: business) 
       }
       check_in = CheckIn.create(user: user, business: business)

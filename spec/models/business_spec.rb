@@ -10,7 +10,7 @@ describe Business do
   it { should have_many :check_ins }
   it { should have_many :customers }
   it { should have_many :unique_customers }
-  it { should have_db_column(:check_in_timeout).with_options(default: 0) }
+  it { should have_db_column(:check_in_timeout).with_options(default: 3600) }
 
   describe '#before_create' do
     it 'calls #update_token' do

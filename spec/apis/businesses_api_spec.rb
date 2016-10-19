@@ -20,9 +20,9 @@ describe BusinessesApi do
     end
   end
 
-  describe 'PUT /businesses/:id/update-token' do
+  describe 'PUT /businesses/:id/update_token' do
     let(:business) { create :business }
-    let(:path) { "/businesses/#{business.id}/update-token" }
+    let(:path) { "/businesses/#{business.id}/update_token" }
 
     context 'given an optional token parameter' do
       it 'calls #update_token with the token parameter' do
