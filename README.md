@@ -1,4 +1,15 @@
 #Check-In API Service
+
+1. [Creating API Skeleton](#creating-api-skeleton)
+2. [GemFile Version Issue](#gemfile-version-issue)
+3. [Installation of Dependencies](#installation-of-dependencies)
+4. [Creating Database](#creating-database-mysql)
+5. [Model Generation](#model-generation)
+6. [Migration of Models](#migration-of-models-to-database)
+7. [API Generation](#api-generation)
+8. [Security](#security)
+9. [Examples](#example-curl-calls)
+
 - - -
 
 This repository contains a minimal API that can be used to check-in at a business. Information and be sent or received using endpoints created using `napa`.
